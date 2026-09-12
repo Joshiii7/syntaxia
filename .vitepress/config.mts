@@ -42,6 +42,12 @@ export default defineConfig({
 	description: SITE_DESCRIPTION,
 	cleanUrls: true,
 
+	// GitHub Pages serves a project site (one that isn't <user>.github.io
+	// itself) from a /<repo-name>/ subpath, not the domain root. Every
+	// internal link VitePress generates gets this prefixed automatically,
+	// so it has to match the actual repo name exactly.
+	base: '/syntaxia/',
+
 	head: [
 		['link', { rel: 'icon', href: '/favicon.svg' }],
 		['meta', { name: 'author', content: AUTHOR_NAME }],
