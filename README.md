@@ -21,11 +21,36 @@ syntaxia/
 │       ├── index.ts            # extends the default theme, registers global components
 │       ├── style.css           # cross-cutting style overrides only
 │       └── components/
-│           ├── CodeEditor.vue      # generic CodeMirror editor, language configurable
-│           ├── WebPlayground.vue   # HTML/CSS/JS editor trio + sandboxed live preview
-│           └── Quiz.vue            # multiple-choice quiz placeholder
+│           ├── CodeEditor.vue        # generic CodeMirror editor, language configurable
+│           ├── WebPlayground.vue     # HTML/CSS/JS editor trio + sandboxed live preview
+│           ├── Quiz.vue              # multiple-choice quiz placeholder
+│           └── ScrollToTopButton.vue # fixed floating back-to-top button
 ├── lessons/
-│   ├── html-css-js/intro-to-html.md
+│   ├── ide/                     # standalone section, no editor on any page:
+│   │   ├── introduction.md               # what an IDE is
+│   │   ├── popular-ides.md               # 6 real IDEs: creator, why, versions, environment
+│   │   └── most-used-ide.md              # VS Code, and why it's the most used
+│   ├── html/                   # 18-page curriculum, in sidebar/prev-next order:
+│   │   ├── introduction.md               # theory only, no editor
+│   │   ├── your-first-html-file.md       # tags + writing/opening a real .html file
+│   │   ├── attributes.md                 # what an attribute is + reference table
+│   │   ├── basic-structure.md            # html/head/body
+│   │   ├── meta-and-head-tags.md         # meta charset/viewport/description, link
+│   │   ├── headings-and-paragraphs.md
+│   │   ├── text-formatting.md            # bold/italic/underline/line breaks
+│   │   ├── links.md
+│   │   ├── images.md
+│   │   ├── lists.md                      # ordered + unordered
+│   │   ├── tables.md
+│   │   ├── forms-part-1.md               # inputs + labels
+│   │   ├── forms-part-2.md               # buttons/dropdowns/checkboxes/radios
+│   │   ├── divs-and-spans.md
+│   │   ├── semantic-html.md              # header/footer/nav/section/article
+│   │   ├── comments-and-clean-code.md
+│   │   ├── putting-it-all-together.md    # profile-page mini project
+│   │   └── final-quiz.md                 # reviews lessons 2-17, no editor
+│   ├── css/intro-to-css.md     # standalone CSS lesson + playground + quiz
+│   ├── javascript/intro-to-javascript.md
 │   └── python/intro-to-python.md
 ├── public/                     # static assets (favicon, etc.)
 └── index.md                    # home page
@@ -51,10 +76,11 @@ A single CodeMirror 6 instance. Use it for any language that doesn't need a live
 
 ### `WebPlayground`
 
-For HTML/CSS/JS lessons specifically: three `CodeEditor` panes (HTML, CSS, JS) beside a sandboxed `<iframe>` preview. The preview rebuilds from `srcdoc` — debounced on every keystroke and on a manual **Run** button — so the learner's script only ever runs inside the sandboxed iframe (`sandbox="allow-scripts"`, no `allow-same-origin`), never in the site's own page context.
+For HTML/CSS/JS lessons: one or more `CodeEditor` panes stacked above a sandboxed `<iframe>` preview. The `panes` prop controls which editors show — a single-language lesson (HTML-only, or CSS/JS against fixed HTML) passes just the one it teaches, so CSS and JS lessons don't drag an HTML editor along, and vice versa. The preview rebuilds from `srcdoc` — debounced on every keystroke and on a manual **Run** button — so the learner's script only ever runs inside the sandboxed iframe (`sandbox="allow-scripts"`, no `allow-same-origin`), never in the site's own page context.
 
 ```md
 <WebPlayground
+	:panes="['html', 'css', 'javascript']"
 	:initial-html="'<h1>Hi</h1>'"
 	:initial-css="'h1 { color: teal; }'"
 	:initial-js="'console.log(1 + 1);'"
