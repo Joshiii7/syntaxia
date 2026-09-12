@@ -1,0 +1,9 @@
+/**
+ * Site-wide theme overrides. Component-scoped styles live in each .vue
+ * file's <style scoped> block; this file is only for cross-cutting rules.
+ */
+
+.vp-doc h1,
+.vp-doc h2 {
+	scroll-margin-top: 4rem;
+}
