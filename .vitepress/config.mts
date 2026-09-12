@@ -4,12 +4,11 @@ const SITE_TITLE = 'Syntaxia';
 const SITE_DESCRIPTION = 'An interactive programming book covering languages, frameworks, and dev tools.';
 const AUTHOR_NAME = 'Joshi Angelo Z. Adlawan';
 
-// TODO: replace with the site's real deployed URL (GitHub Pages, a custom
-// domain, etc.) once it exists. Canonical links, og:url, and JSON-LD @id/url
-// fields all need a real, final URL to be correct — a placeholder here is a
-// known, deliberate gap, not an oversight (see coding-standards-websites'
-// "watch for a placeholder domain" note).
-const SITE_URL = 'https://YOUR-DOMAIN-HERE.com';
+// The site's real deployed URL: GitHub Pages project site, served from
+// /syntaxia/ (the repo name), not the domain root. No trailing slash here,
+// since every call site below appends its own leading-slash path (or just
+// "/" for the home page) directly onto this constant.
+const SITE_URL = 'https://joshiii7.github.io/syntaxia';
 
 const OG_IMAGE = `${SITE_URL}/syntaxia-logo.png`;
 
