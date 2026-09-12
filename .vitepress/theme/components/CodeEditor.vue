@@ -154,7 +154,7 @@ watch(
 }
 
 .code-editor__host :deep(.cm-editor.cm-focused) {
-	outline: 2px solid var(--vp-c-brand-1);
+	outline: 2px solid var(--color-brand-500);
 	outline-offset: -2px;
 }
 

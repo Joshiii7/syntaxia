@@ -1,9 +1,185 @@
 /**
  * Site-wide theme overrides. Component-scoped styles live in each .vue
  * file's <style scoped> block; this file is only for cross-cutting rules.
+ *
+ * Color theme copied from student-exam-portal (src/index.css), not
+ * re-derived: same brand/navy/slate hex values, same split between a fixed
+ * (non-theme-swapped) brand-action-button color and a theme-conditional
+ * link/accent color, same chrome-shell-vs-page-canvas background split.
  */
+
+/*
+ * Fixed brand-action-button colors: student-exam-portal's Button.tsx
+ * "primary" variant is `bg-brand-400 text-navy-900 hover:bg-brand-500`
+ * regardless of light/dark theme — these three plus navy-900 are quoted
+ * verbatim from its brand and navy color scales and never swap.
+ */
+:root {
+	--color-brand-200: #9cf2e6;
+	--color-brand-400: #34ebd5;
+	--color-brand-500: #14c9b3;
+	--color-brand-600: #0da694;
+	--color-navy-900: #0a0f1f;
+
+	--vp-button-brand-border: transparent;
+	--vp-button-brand-text: var(--color-navy-900);
+	--vp-button-brand-bg: var(--color-brand-400);
+	--vp-button-brand-hover-border: transparent;
+	--vp-button-brand-hover-text: var(--color-navy-900);
+	--vp-button-brand-hover-bg: var(--color-brand-500);
+	--vp-button-brand-active-border: transparent;
+	--vp-button-brand-active-text: var(--color-navy-900);
+	--vp-button-brand-active-bg: var(--color-brand-600);
+}
+
+::selection {
+	background: var(--color-brand-200);
+	color: var(--color-navy-900);
+}
+
+/*
+ * Light theme: student-exam-portal's html[data-theme="light"] block — the
+ * standard Tailwind slate scale for page/text/borders, a white chrome
+ * shell (nav/sidebar), and --color-link's hand-picked dark teal (not a
+ * lightened/darkened brand-400 — deliberately much darker than the whole
+ * brand-* scale to clear text contrast on a near-white surface).
+ */
+:root {
+	--vp-c-brand-1: #0b3a34;
+	--vp-c-brand-2: color-mix(in srgb, #0b3a34 80%, black);
+	--vp-c-brand-3: color-mix(in srgb, #0b3a34 90%, black);
+	--vp-c-brand-soft: color-mix(in srgb, #0b3a34 12%, transparent);
+
+	--vp-c-bg: #f8fafc;
+	--vp-c-bg-alt: #ffffff;
+	--vp-c-bg-elv: #f1f5f9;
+	--vp-c-bg-soft: #f1f5f9;
+	--vp-c-divider: #e2e8f0;
+	--vp-c-border: #cbd5e1;
+	--vp-c-text-1: #0f172a;
+	--vp-c-text-2: #475569;
+	--vp-c-text-3: #64748b;
+}
+
+/*
+ * Dark theme: student-exam-portal's default (dark-by-default) palette —
+ * page canvas/text/borders from --color-slate-*, chrome shell from
+ * --color-chrome (near-identical navy, kept as its own token upstream so
+ * the shell doesn't accidentally follow a page-content color choice), and
+ * --color-link's brand-400.
+ */
+:root.dark {
+	--vp-c-brand-1: var(--color-brand-400);
+	--vp-c-brand-2: color-mix(in srgb, var(--color-brand-400) 85%, black);
+	--vp-c-brand-3: color-mix(in srgb, var(--color-brand-400) 92%, black);
+	--vp-c-brand-soft: color-mix(in srgb, var(--color-brand-400) 16%, transparent);
+
+	--vp-c-bg: #0a0f1a;
+	--vp-c-bg-alt: var(--color-navy-900);
+	--vp-c-bg-elv: #141b2e;
+	--vp-c-bg-soft: #141b2e;
+	--vp-c-divider: #232c45;
+	--vp-c-border: #384264;
+	--vp-c-text-1: #f5f6fa;
+	--vp-c-text-2: #a3abc7;
+	--vp-c-text-3: #8a93b3;
+}
 
 .vp-doc h1,
 .vp-doc h2 {
 	scroll-margin-top: 4rem;
+}
+
+/*
+ * Full-bleed layout: the default theme centers a max 1440px-wide "layout"
+ * on very wide viewports, which pushes the sidebar in from the left edge
+ * with a growing gutter. These reset the 1440px+ breakpoint back to the
+ * same flush-left values already used at the 960-1439px breakpoint, so the
+ * sidebar sits at the true left edge of the viewport at every width.
+ *
+ * !important is required here: the default theme's own rules for this
+ * breakpoint carry a Vue scoped-style attribute selector (e.g.
+ * `.VPSidebar[data-v-xxxxxxxx]`), which is higher specificity than a plain
+ * class selector and would otherwise win regardless of stylesheet order.
+ * That attribute hash is generated per build and isn't something we can
+ * target directly, so !important on just these properties is the correct,
+ * narrowly-scoped way to win the cascade.
+ */
+/*
+ * Hero layout: puts the rotating cube (home-hero-image slot, see theme
+ * index.ts) at the opposite end of the hero from the h1/tagline/actions
+ * block, vertically centered against it, per the explicit flex spec asked
+ * for. !important is required for the same reason as the sidebar rules
+ * below: the default theme's own `.container` rule inside VPHero.vue
+ * carries a Vue scoped-style attribute selector, which ties or beats a
+ * plain class selector's specificity regardless of stylesheet order.
+ *
+ * max-width is included here too: the default theme hardcodes the hero's
+ * own container at 1152px, unrelated to --vp-layout-max-width, so it never
+ * picked up the 80rem (1280px) cap used everywhere else on this page (nav,
+ * every home section, footer). This brings it in line with the rest.
+ */
+.VPHero .container {
+	max-width: 80rem !important;
+}
+
+@media (min-width: 960px) {
+	.VPHero .container {
+		justify-content: space-between !important;
+		align-items: center !important;
+	}
+}
+
+/*
+ * Home page bottom margin: the default theme puts 96px (128px at 768px+)
+ * of margin-bottom on .VPHome itself, meant to separate it from the
+ * default theme's own doc footer. This site's homepage ends with its own
+ * closing CTA section immediately followed by SiteFooter (in layout-bottom,
+ * a sibling of .VPHome, not a child), so that margin just left a gap of
+ * plain background between the last section and the footer. !important for
+ * the same reason as the rules elsewhere in this file: the default theme's
+ * `.VPHome` rule carries a Vue scoped-style attribute selector.
+ */
+.VPHome {
+	margin-bottom: 0 !important;
+}
+
+/*
+ * Nav bar width: on pages with no sidebar (currently just the home page),
+ * cap the nav's own content row at the same 80rem used by every homepage
+ * section (and the footer, in SiteFooter.vue), so the header lines up with
+ * the content below it instead of stretching wider on large screens.
+ * Scoped to :not(.has-sidebar) so lesson pages, which use an entirely
+ * different sidebar-offset formula, are unaffected. !important for the
+ * same reason as the sidebar rules below: the default theme's `.container`
+ * rule carries a Vue scoped-style attribute selector.
+ */
+.VPNavBar:not(.has-sidebar) .container {
+	max-width: 80rem !important;
+}
+
+@media (min-width: 1440px) {
+	.VPSidebar {
+		padding-left: 32px !important;
+		width: var(--vp-sidebar-width) !important;
+	}
+
+	.VPNavBar.has-sidebar .title {
+		padding-left: 32px !important;
+		width: var(--vp-sidebar-width) !important;
+	}
+
+	.VPNavBar.has-sidebar .content {
+		padding-right: 32px !important;
+		padding-left: var(--vp-sidebar-width) !important;
+	}
+
+	.VPNavBar.has-sidebar .divider {
+		padding-left: var(--vp-sidebar-width) !important;
+	}
+
+	.VPContent.has-sidebar {
+		padding-right: 0 !important;
+		padding-left: var(--vp-sidebar-width) !important;
+	}
 }

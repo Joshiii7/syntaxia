@@ -119,21 +119,30 @@ function tryAgain() {
 
 .quiz__button {
 	padding: 8px 16px;
-	border: 1px solid var(--vp-c-brand-1);
+	border: 1px solid transparent;
 	border-radius: 6px;
-	background: var(--vp-c-brand-1);
-	color: var(--vp-c-white);
+	background: var(--color-brand-400);
+	color: var(--color-navy-900);
 	font-weight: 600;
 	cursor: pointer;
 }
 
+.quiz__button:hover {
+	background: var(--color-brand-500);
+}
+
 .quiz__button--secondary {
 	background: transparent;
+	border-color: var(--vp-c-brand-1);
 	color: var(--vp-c-brand-1);
 }
 
+.quiz__button--secondary:hover {
+	background: var(--vp-c-brand-soft);
+}
+
 .quiz__button:focus-visible {
-	outline: 2px solid var(--vp-c-brand-1);
+	outline: 2px solid var(--color-brand-500);
 	outline-offset: 2px;
 }
 
