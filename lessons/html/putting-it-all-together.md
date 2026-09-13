@@ -80,5 +80,3 @@ If you have all six, you have just built a real webpage using nothing but what y
 
 - How to combine structure, headings, paragraphs, lists, links, and semantic tags into one complete page.
 - That building a real page is just a matter of putting familiar, small pieces together.
-
-**Next lesson:** [Final Quiz](/lessons/html/final-quiz)

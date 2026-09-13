@@ -88,5 +88,3 @@ Add a `title` attribute to the paragraph, with your own tooltip text. Hover over
 - Attributes always live inside the opening tag, and never get their own closing tag.
 - Global attributes like id, class, title, style, and lang can be used on almost any tag.
 - A reference table of common attributes is here whenever you need to look one up again.
-
-**Next lesson:** [Basic Structure](/lessons/html/basic-structure)

@@ -58,5 +58,3 @@ The next lesson looks at several real IDEs developers actually use today, includ
 - IDE stands for Integrated Development Environment.
 - A typical IDE window has a file explorer, colored syntax highlighting, and often a built-in terminal.
 - An IDE helps by coloring code, pointing out mistakes, and organizing many files at once.
-
-**Next lesson:** [Popular IDEs and Their History](/lessons/ide/popular-ides)

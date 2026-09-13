@@ -3,7 +3,8 @@
  * Placeholder multiple-choice quiz, embeddable in lesson Markdown.
  * One question, one correct answer, immediate feedback on submit.
  */
-import { computed, ref, useId } from 'vue';
+import { computed, onBeforeUnmount, ref, useId, watch } from 'vue';
+import { useLessonRequirements } from '../composables/useLessonRequirements';
 
 const props = defineProps({
 	question: {
@@ -23,6 +24,13 @@ const props = defineProps({
 		type: String,
 		default: '',
 	},
+	// Optional explicit id for the page-level gating registry. Almost never
+	// needs to be set by hand — omitted, it falls back to this instance's
+	// own auto-generated groupName below, so existing lessons need no changes.
+	id: {
+		type: String,
+		default: null,
+	},
 });
 
 const groupName = useId();
@@ -30,6 +38,14 @@ const selected = ref(null);
 const submitted = ref(false);
 
 const isCorrect = computed(() => submitted.value && selected.value === props.answerIndex);
+
+// Register this quiz as a gating requirement for the current lesson page
+// (see useLessonRequirements.ts) so LessonNav can soft-gate "Next Lesson"
+// until it's answered correctly.
+const registry = useLessonRequirements();
+const requirementId = props.id ?? groupName;
+onBeforeUnmount(registry.register(requirementId, 'quiz'));
+watch(isCorrect, (passed) => registry.reportResult(requirementId, passed), { immediate: true });
 
 function checkAnswer() {
 	submitted.value = true;

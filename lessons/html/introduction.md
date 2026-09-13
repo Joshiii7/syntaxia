@@ -56,5 +56,3 @@ So when people today say "HTML5," they usually just mean "modern HTML," since th
 - HTML is a language made of instructions that tell a browser what to show and how to arrange it.
 - HTML was created by Tim Berners-Lee in 1991, to let documents link to each other.
 - HTML has had many versions. The current one has no number. It is called the HTML Living Standard.
-
-**Next lesson:** [What is a Tag, and Your First HTML File](/lessons/html/your-first-html-file)

@@ -137,5 +137,3 @@ Doing this once, outside of this book, is what makes the habit stick.
 You just reviewed every lesson in the HTML section: tags and your first file, attributes, structure, meta tags and the head, headings and paragraphs, text formatting, links, images, lists, tables, both parts of forms, divs and spans, semantic HTML, comments, clean code, and building a full profile page.
 
 That is a real, solid foundation. From here, the next step is learning how to make your pages look good, which is exactly what CSS is for.
-
-**Continue to the next section:** [Intro to CSS](/lessons/css/intro-to-css)

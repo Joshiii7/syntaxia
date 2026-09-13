@@ -63,5 +63,3 @@ Add a third item to each list. Notice the ordered list automatically renumbers i
 - ul creates an unordered list, shown with bullets, for when order does not matter.
 - ol creates an ordered list, shown with numbers, for when order matters.
 - Each item in either kind of list goes inside its own li tag.
-
-**Next lesson:** [Tables](/lessons/html/tables)

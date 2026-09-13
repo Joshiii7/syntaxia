@@ -52,5 +52,3 @@ Add a second link below the first one, pointing to a different address of your c
 - The a tag creates a link.
 - The href attribute holds the address a link points to.
 - The text between the opening and closing a tags is what a visitor sees and clicks.
-
-**Next lesson:** [Images](/lessons/html/images)

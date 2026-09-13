@@ -61,5 +61,3 @@ Add a third label and input pair for a "Last Name" field. Give the label and inp
 - The type attribute controls what kind of field an input is.
 - The label tag describes what a field is for.
 - A label connects to an input by matching the label's for attribute to the input's id attribute.
-
-**Next lesson:** [Forms Part 2](/lessons/html/forms-part-2)

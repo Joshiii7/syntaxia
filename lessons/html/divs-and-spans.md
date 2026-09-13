@@ -58,5 +58,3 @@ Wrap a second paragraph inside the same div, and mark one more word using a span
 - div groups a whole block of content together, like a section or a card.
 - span marks a small piece of text inside a line, without breaking the flow of the sentence.
 - Neither tag means anything special by itself. They are plain containers, mainly useful once you add styling.
-
-**Next lesson:** [Semantic HTML](/lessons/html/semantic-html)

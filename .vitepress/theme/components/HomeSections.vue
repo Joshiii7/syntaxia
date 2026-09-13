@@ -359,9 +359,7 @@ function toggleFaq(index) {
 
 		<section class="home-section home-cta reveal">
 			<div class="home-section__inner home-cta__inner">
-				<h2 class="home-section__title">Ready to start?</h2>
-				<p class="home-section__subtitle">Jump into the first lesson. It takes less than a minute to begin.</p>
-				<a href="/lessons/ide/introduction" class="home-cta__button">Start Learning</a>
+				<CtaBanner />
 			</div>
 		</section>
 	</div>
@@ -885,30 +883,18 @@ function toggleFaq(index) {
 	}
 }
 
-/* Closing call to action */
+/* Closing call to action: CtaBanner is a full-bleed promo panel, so this
+   section drops the default horizontal padding/max-width the same way
+   .home-try-it does above — the banner's own background runs edge to edge,
+   and CtaBanner centers its *content* at 80rem internally instead. */
+.home-cta {
+	padding-left: 0;
+	padding-right: 0;
+}
 
 .home-cta__inner {
-	max-width: 560px;
-}
-
-.home-cta__button {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	padding: 12px 28px;
-	border-radius: 8px;
-	background: var(--color-brand-400);
-	color: var(--color-navy-900);
-	font-weight: 600;
-	font-size: 15px;
-}
-
-.home-cta__button:hover {
-	background: var(--color-brand-500);
-}
-
-.home-cta__button:focus-visible {
-	outline: 2px solid var(--color-brand-500);
-	outline-offset: 2px;
+	max-width: none;
+	width: 100%;
+	text-align: left;
 }
 </style>

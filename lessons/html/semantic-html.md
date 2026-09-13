@@ -71,5 +71,3 @@ Add a `<nav>` inside the `<header>`, with two links inside it using the `<a>` ta
 - Semantic tags describe what a part of a page actually is, instead of using a plain, unlabeled div.
 - header marks a top section, nav marks the main links, section groups related content, article marks a self-contained piece of content, and footer marks a bottom section.
 - Semantic tags help other developers and screen readers understand a page's structure.
-
-**Next lesson:** [Comments and Clean Code](/lessons/html/comments-and-clean-code)

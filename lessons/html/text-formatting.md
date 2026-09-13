@@ -65,5 +65,3 @@ Write a short sentence that uses all three formatting tags at once. Then add a t
 - The em tag makes text italic.
 - The u tag underlines text.
 - The br tag forces a new line, and has no closing tag.
-
-**Next lesson:** [Links](/lessons/html/links)
