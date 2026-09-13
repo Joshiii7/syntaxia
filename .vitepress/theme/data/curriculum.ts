@@ -43,8 +43,15 @@ export const curriculum: CurriculumTrack[] = [
 		title: 'IDEs',
 		lessons: [
 			{ slug: 'introduction', title: 'Introduction to IDEs' },
-			{ slug: 'popular-ides', title: 'Popular IDEs and Their History' },
-			{ slug: 'most-used-ide', title: 'The Most Used IDE' },
+			{ slug: 'why-use-an-ide', title: 'Why Use an IDE?' },
+			{ slug: 'popular-ides-overview', title: 'Popular IDEs & Code Editors Overview' },
+			{ slug: 'choosing-the-right-ide', title: 'Choosing the Right IDE for Your Path' },
+			{ slug: 'setting-up-your-ide', title: 'Setting Up Your IDE' },
+			{ slug: 'ide-navigation-and-features', title: 'Basic IDE Navigation & Features' },
+			{ slug: 'using-the-terminal', title: 'Using the Integrated Terminal' },
+			{ slug: 'debugging-basics', title: 'Debugging Basics in an IDE' },
+			{ slug: 'extensions-and-customization', title: 'Extensions & Customization' },
+			{ slug: 'shortcuts-cheat-sheet', title: 'IDE Shortcuts Cheat Sheet' },
 		],
 	},
 	{

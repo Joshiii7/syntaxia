@@ -41,7 +41,7 @@ You do not need to do this to continue the book. Every lesson's built-in editor 
 4. Write some HTML in it.
 5. Find the saved file on your computer, and double click it, so it opens in your browser.
 
-The next lesson looks at several real IDEs developers actually use today, including who built them and why.
+The next lesson looks at exactly why that extra bundle of tools is worth using in the first place.
 
 ## Check your understanding
 
