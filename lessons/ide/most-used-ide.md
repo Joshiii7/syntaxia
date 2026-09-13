@@ -50,5 +50,3 @@ Put together, this is why so many developers, from complete beginners to experie
 - Its environment includes a sidebar, a built-in extensions marketplace, a command palette, a built-in terminal, and split editing.
 
 That wraps up this introduction to IDEs. From here, it is time to start writing real code, beginning with HTML.
-
-**Continue to the next section:** [Introduction to HTML](/lessons/html/introduction)

@@ -73,5 +73,3 @@ In the editor above, add a second paragraph introducing yourself. Something like
 - A tag is a labeled instruction written in angle brackets, like `<h1>`.
 - Most tags come in pairs: an opening tag and a closing tag.
 - An opening tag, its content, and its closing tag together are called an element.
-
-**Next lesson:** [Attributes](/lessons/html/attributes)

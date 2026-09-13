@@ -21,6 +21,27 @@
 	--color-brand-600: #0da694;
 	--color-navy-900: #0a0f1f;
 
+	/*
+	 * Default theme default is 1440px. This is the single variable the
+	 * default theme's own VPSidebar/VPNavBar/VPContent components use to
+	 * center the sidebar + doc content as one block on wide viewports
+	 * (their built-in `@media (min-width: 1440px)` rules), so setting it to
+	 * the same 80rem used everywhere else on this site (nav, every home
+	 * section, footer) makes lesson pages match without hand-rolling the
+	 * centering math ourselves — see the removed override this replaced,
+	 * below where .VPNavBar:not(.has-sidebar) is styled.
+	 */
+	--vp-layout-max-width: 80rem;
+
+	/*
+	 * Sidebar background: default theme's own default is
+	 * var(--vp-c-bg-alt), a deliberately distinct "chrome shell" shade from
+	 * the page canvas (see the light/dark theme blocks below). Matching it
+	 * to --vp-c-bg instead makes the sidebar blend into the page instead of
+	 * reading as a separate panel.
+	 */
+	--vp-sidebar-bg-color: var(--vp-c-bg);
+
 	--vp-button-brand-border: transparent;
 	--vp-button-brand-text: var(--color-navy-900);
 	--vp-button-brand-bg: var(--color-brand-400);
@@ -91,21 +112,6 @@
 }
 
 /*
- * Full-bleed layout: the default theme centers a max 1440px-wide "layout"
- * on very wide viewports, which pushes the sidebar in from the left edge
- * with a growing gutter. These reset the 1440px+ breakpoint back to the
- * same flush-left values already used at the 960-1439px breakpoint, so the
- * sidebar sits at the true left edge of the viewport at every width.
- *
- * !important is required here: the default theme's own rules for this
- * breakpoint carry a Vue scoped-style attribute selector (e.g.
- * `.VPSidebar[data-v-xxxxxxxx]`), which is higher specificity than a plain
- * class selector and would otherwise win regardless of stylesheet order.
- * That attribute hash is generated per build and isn't something we can
- * target directly, so !important on just these properties is the correct,
- * narrowly-scoped way to win the cascade.
- */
-/*
  * Hero layout: puts the rotating cube (home-hero-image slot, see theme
  * index.ts) at the opposite end of the hero from the h1/tagline/actions
  * block, vertically centered against it, per the explicit flex spec asked
@@ -145,41 +151,134 @@
 }
 
 /*
- * Nav bar width: on pages with no sidebar (currently just the home page),
- * cap the nav's own content row at the same 80rem used by every homepage
- * section (and the footer, in SiteFooter.vue), so the header lines up with
- * the content below it instead of stretching wider on large screens.
- * Scoped to :not(.has-sidebar) so lesson pages, which use an entirely
- * different sidebar-offset formula, are unaffected. !important for the
- * same reason as the sidebar rules below: the default theme's `.container`
- * rule carries a Vue scoped-style attribute selector.
+ * One header everywhere: the default theme renders a structurally different
+ * nav bar on pages with a sidebar (lesson pages) vs. without (home,
+ * /lessons/, /paths/) — on has-sidebar pages, the logo (`.title`) is pulled
+ * out of the normal flex row into its own absolutely-positioned column
+ * matching the sidebar's width, `.content` (search/nav links/hamburger)
+ * gets padding-left to clear that column instead of just following the
+ * logo in flow, `.wrapper` loses its side padding, `.container` stretches
+ * to 100% instead of being capped, and `.divider` gets padding-left so it
+ * only spans under `.content`. That's the default theme's intentional
+ * design for pairing a nav bar with a sidebar-driven doc layout, but this
+ * site wants the exact same nav bar — cap, alignment, everything — on
+ * every page regardless of whether that page also happens to render a
+ * sidebar underneath it. Each property below is the has-sidebar-specific
+ * value from VPNavBar.vue's own source, reset back to what a non-sidebar
+ * page already gets for free from the base (non-has-sidebar-scoped) rules.
+ * !important throughout for the same reason as elsewhere in this file: the
+ * default theme's own rules carry a Vue scoped-style attribute selector.
  */
-.VPNavBar:not(.has-sidebar) .container {
+.VPNavBar .container {
 	max-width: 80rem !important;
+}
+
+@media (min-width: 960px) {
+	.VPNavBar.has-sidebar .wrapper {
+		padding: 0 32px !important;
+	}
+
+	.VPNavBar.has-sidebar .title {
+		position: static !important;
+		top: auto !important;
+		left: auto !important;
+		z-index: auto !important;
+		padding: 0 !important;
+		width: auto !important;
+		height: calc(var(--vp-nav-height) - 1px) !important;
+	}
+
+	.VPNavBar.has-sidebar .content {
+		position: static !important;
+		z-index: auto !important;
+		padding-right: 0 !important;
+		padding-left: 0 !important;
+	}
+
+	.VPNavBar.has-sidebar .divider {
+		padding-left: 0 !important;
+	}
+}
+
+/*
+ * Header above sidebar on lesson pages: the default theme's mobile sidebar
+ * drawer (open below 960px) has a higher z-index than the nav bar by
+ * design (60 vs. 30, see vars.css), so it slides in on top of everything —
+ * including the header. That's normally harmless, but since the nav bar's
+ * background and our sidebar's background are now the same color
+ * (--vp-c-bg, see --vp-sidebar-bg-color above), opening the drawer visually
+ * erases the logo/search/menu-toggle underneath it instead of just
+ * covering page content.
+ *
+ * Fixed by raising the nav above the sidebar specifically (one more than
+ * --vp-z-index-sidebar, so it tracks whichever value is active at the
+ * current breakpoint) rather than lowering the sidebar itself — the
+ * sidebar's current z-index is also what keeps it above
+ * --vp-z-index-backdrop (the dimming layer behind the open mobile drawer);
+ * lowering it instead let that backdrop paint over the sidebar too.
+ *
+ * Raising the z-index alone isn't enough, though: `.VPNav` itself is
+ * transparent by default (confirmed via getComputedStyle) — the default
+ * theme normally paints its opaque surface on a nested `.content-body`
+ * element instead, which doesn't span the logo/title area, so the sidebar
+ * would still show straight through a "correctly stacked" but see-through
+ * nav. Giving `.VPNav` its own opaque background fixes that. Scoped to
+ * `:has(.has-sidebar)` (i.e. only on lesson pages) so this never touches
+ * the home page's own intentional transparent-nav-over-hero look.
+ *
+ * padding-top on the sidebar is bumped to match so its first item still
+ * clears the now-higher header instead of starting underneath it (this
+ * already happened for free at 960px+ via the default theme's own rules —
+ * this just extends it to the mobile-drawer width too). !important for
+ * the same reason as elsewhere in this file: the default theme's own
+ * rules carry a Vue scoped-style attribute selector.
+ */
+.VPNav:has(.has-sidebar) {
+	z-index: calc(var(--vp-z-index-sidebar) + 1) !important;
+	background-color: var(--vp-c-bg) !important;
+}
+
+/*
+ * Sidebar/header left-edge alignment: the default theme's own 1440px+
+ * centering formula for `.VPSidebar` —
+ *   padding-left: max(32px, calc((100% - (var(--vp-layout-max-width) - 64px)) / 2));
+ * — was designed to pair with its OWN has-sidebar nav layout (title
+ * absolutely positioned, no wrapper side padding — see the has-sidebar
+ * resets above). Once the header was unified to the plain
+ * `max-width: 80rem; margin: 0 auto;` a non-sidebar page already used
+ * (centered inside `.wrapper`'s own 32px side padding), that's a different
+ * formula from the sidebar's, so above 1440px the two drift apart instead
+ * of sharing a left edge.
+ *
+ * --vp-header-inset recomputes the header's actual left edge instead:
+ * `.wrapper`'s own 32px padding, plus half of whatever space is left over
+ * once an 80rem-wide, 64px-gutter'd row (matching the header's own
+ * max-width + its wrapper's 64px total side padding) no longer fills the
+ * viewport. Below 1440px this equals a flat 32px (no centering), same as
+ * the default theme's own un-centered 960-1439px sidebar padding — kept
+ * scoped to the same `min-width: 1440px` breakpoint the original formula
+ * used, so the 960-1439px range (where the sidebar is correctly just
+ * `var(--vp-sidebar-width)` with no inset at all) isn't touched.
+ */
+:root {
+	/*
+	 * `%` here, not `vw` — `.VPSidebar` is position: fixed, so a percentage
+	 * on it resolves against the viewport just like `vw` does, EXCEPT `vw`
+	 * includes the scrollbar's own width while `%` (matching how the
+	 * header's own wrapper/container percentage-based sizing behaves)
+	 * doesn't — using `vw` first measured 8px off (half a ~17px scrollbar)
+	 * on a real page, confirmed by comparing computed rects directly.
+	 */
+	--vp-header-inset: max(32px, calc((100% - (var(--vp-layout-max-width) + 64px)) / 2 + 32px));
+}
+
+.VPSidebar {
+	padding-top: var(--vp-nav-height) !important;
 }
 
 @media (min-width: 1440px) {
 	.VPSidebar {
-		padding-left: 32px !important;
-		width: var(--vp-sidebar-width) !important;
-	}
-
-	.VPNavBar.has-sidebar .title {
-		padding-left: 32px !important;
-		width: var(--vp-sidebar-width) !important;
-	}
-
-	.VPNavBar.has-sidebar .content {
-		padding-right: 32px !important;
-		padding-left: var(--vp-sidebar-width) !important;
-	}
-
-	.VPNavBar.has-sidebar .divider {
-		padding-left: var(--vp-sidebar-width) !important;
-	}
-
-	.VPContent.has-sidebar {
-		padding-right: 0 !important;
-		padding-left: var(--vp-sidebar-width) !important;
+		padding-left: var(--vp-header-inset) !important;
+		width: calc(var(--vp-header-inset) + var(--vp-sidebar-width)) !important;
 	}
 }

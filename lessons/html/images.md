@@ -54,5 +54,3 @@ Change the alt text to describe the placeholder picture in your own words.
 - The img tag shows a picture, using the src attribute to point to it.
 - The img tag has no closing tag.
 - The alt attribute describes the picture in words, for shown when it fails to load, and for screen readers.
-
-**Next lesson:** [Lists](/lessons/html/lists)

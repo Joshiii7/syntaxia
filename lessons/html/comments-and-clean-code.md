@@ -64,5 +64,3 @@ Add a comment above the paragraph, explaining in your own words what that paragr
 - A comment starts with `<!--` and ends with `-->`, and is completely invisible on the actual page.
 - Comments are useful for explanations, reminders, and temporarily hiding code.
 - Clean code means code that is easy to read, using habits like consistent indentation and lowercase tag names.
-
-**Next lesson:** [Putting It All Together](/lessons/html/putting-it-all-together)

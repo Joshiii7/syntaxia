@@ -88,5 +88,3 @@ Do not confuse this with Visual Studio Code above. They share a name and a maker
 - PyCharm, also by JetBrains, brought that same idea to Python developers starting in 2010.
 - Sublime Text, made by Jon Skinner in 2008, values speed and simplicity above extra built-in features.
 - Eclipse, started by IBM in 2001 and later handed to a nonprofit, is built around add-ons called plugins.
-
-**Next lesson:** [The Most Used IDE](/lessons/ide/most-used-ide)

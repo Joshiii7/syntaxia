@@ -77,5 +77,3 @@ Change the description meta tag's content to describe your own page idea.
 - The viewport meta tag makes a page display correctly on phones and tablets.
 - The description meta tag is a short summary, often shown in search engine results.
 - The link tag connects an outside file, most commonly a CSS stylesheet.
-
-**Next lesson:** [Headings and Paragraphs](/lessons/html/headings-and-paragraphs)

@@ -59,5 +59,3 @@ Add a third row with your own name and favorite color.
 - tr is one row of the grid.
 - th is a header cell, used to label a column.
 - td is a normal cell, holding regular information.
-
-**Next lesson:** [Forms Part 1](/lessons/html/forms-part-1)

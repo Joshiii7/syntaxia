@@ -4,7 +4,7 @@
  * iframe preview beside them. The preview iframe is rebuilt from srcdoc, so
  * the user's script never runs in the site's own origin/context.
  */
-import { onBeforeUnmount, ref } from 'vue';
+import { onBeforeUnmount, onMounted, ref } from 'vue';
 import CodeEditor from './CodeEditor.vue';
 
 const props = defineProps({
@@ -49,14 +49,53 @@ const props = defineProps({
 		type: String,
 		default: 'light',
 	},
+	// Opt-in only (see Exercise.vue): when true, a small bootstrap script is
+	// injected into the generated preview document that reports the
+	// resulting DOM/console output back to us via postMessage, and a
+	// `graded` event fires with that snapshot. False (the default) means
+	// zero behavior change from today for every other usage of this component.
+	graded: {
+		type: Boolean,
+		default: false,
+	},
 });
+
+const emit = defineEmits(['graded']);
 
 const htmlCode = ref(props.initialHtml);
 const cssCode = ref(props.initialCss);
 const jsCode = ref(props.initialJs);
 const previewDoc = ref('');
+const iframeEl = ref(null);
 
 let debounceTimer = null;
+
+// Only ever injected when `graded` is true. The iframe stays
+// sandbox="allow-scripts" only (no allow-same-origin, unchanged) — this
+// script reports out via postMessage, which works fine from an opaque-origin
+// iframe, so grading never requires loosening the existing sandbox.
+const GRADING_BOOTSTRAP = `
+<script>
+(function () {
+	var consoleOutput = [];
+	var originalLog = console.log;
+	var originalError = console.error;
+	console.log = function () { consoleOutput.push(Array.from(arguments).join(' ')); originalLog.apply(console, arguments); };
+	console.error = function () { consoleOutput.push(Array.from(arguments).join(' ')); originalError.apply(console, arguments); };
+	var errors = [];
+	window.addEventListener('error', function (e) { errors.push(String(e.message)); });
+	window.addEventListener('load', function () {
+		setTimeout(function () {
+			window.parent.postMessage({
+				source: 'syntaxia-exercise',
+				html: document.body.innerHTML,
+				consoleOutput: consoleOutput,
+				errors: errors,
+			}, '*');
+		}, 50);
+	});
+})();
+<\/script>`;
 
 function buildPreviewDocument() {
 	const darkBase = props.previewTheme === 'dark'
@@ -67,6 +106,7 @@ function buildPreviewDocument() {
 <head><meta charset="utf-8"><style>${darkBase}${cssCode.value}</style></head>
 <body>${htmlCode.value}
 <script>${jsCode.value}<\/script>
+${props.graded ? GRADING_BOOTSTRAP : ''}
 </body>
 </html>`;
 }
@@ -75,12 +115,25 @@ function runPreview() {
 	previewDoc.value = buildPreviewDocument();
 }
 
+function onGradingMessage(event) {
+	if (event.source !== iframeEl.value?.contentWindow) return;
+	if (event.data?.source !== 'syntaxia-exercise') return;
+	emit('graded', { html: event.data.html, consoleOutput: event.data.consoleOutput, errors: event.data.errors });
+}
+
+onMounted(() => {
+	if (props.graded) window.addEventListener('message', onGradingMessage);
+});
+
 function scheduleAutoRun() {
 	clearTimeout(debounceTimer);
 	debounceTimer = setTimeout(runPreview, 600);
 }
 
-onBeforeUnmount(() => clearTimeout(debounceTimer));
+onBeforeUnmount(() => {
+	clearTimeout(debounceTimer);
+	if (props.graded) window.removeEventListener('message', onGradingMessage);
+});
 
 runPreview();
 
@@ -214,6 +267,7 @@ onBeforeUnmount(() => {
 		>
 			<h4 class="web-playground__pane-title">Preview</h4>
 			<iframe
+				ref="iframeEl"
 				class="web-playground__frame"
 				:class="{ 'web-playground__frame--dark': previewTheme === 'dark' }"
 				:style="{ height: previewHeight }"

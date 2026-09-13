@@ -1,4 +1,7 @@
 import { defineConfig } from 'vitepress';
+import { readdirSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import { curriculum, flattenTrackLessons, lessonPath, resolveLesson } from './theme/data/curriculum';
 
 const SITE_TITLE = 'Syntaxia';
 const SITE_DESCRIPTION = 'An interactive programming book covering languages, frameworks, and dev tools.';
@@ -12,21 +15,43 @@ const SITE_URL = 'https://joshiii7.github.io/syntaxia';
 
 const OG_IMAGE = `${SITE_URL}/syntaxia-logo.png`;
 
-const SECTION_NAMES: Record<string, string> = {
-	ide: 'IDEs',
-	html: 'HTML',
-	css: 'CSS',
-	javascript: 'JavaScript',
-	python: 'Python',
-};
+// Derived from curriculum.ts (the single source of truth for lesson order/
+// titles/chapters) rather than hand-duplicated here.
+const SECTION_NAMES: Record<string, string> = Object.fromEntries(curriculum.map((t) => [t.slug, t.title]));
 
-const SECTION_FIRST_LESSON: Record<string, string> = {
-	ide: '/lessons/ide/introduction',
-	html: '/lessons/html/introduction',
-	css: '/lessons/css/intro-to-css',
-	javascript: '/lessons/javascript/intro-to-javascript',
-	python: '/lessons/python/intro-to-python',
-};
+const SECTION_FIRST_LESSON: Record<string, string> = Object.fromEntries(
+	curriculum.map((t) => {
+		const first = flattenTrackLessons(t)[0];
+		return [t.slug, lessonPath(t.slug, first.lesson.slug)];
+	}),
+);
+
+// Build-time guardrail: warns (doesn't throw, so a WIP draft lesson doesn't
+// break `vitepress dev`) if curriculum.ts and the actual lessons/ directory
+// tree drift apart — exactly the "duplicated source of truth" failure mode
+// this refactor is meant to eliminate, now that order/titles live in this
+// hand-maintained file instead of being read from the files themselves.
+function checkCurriculumMatchesFilesystem() {
+	const lessonsDir = fileURLToPath(new URL('../lessons', import.meta.url));
+	const curriculumPaths = new Set(curriculum.flatMap((t) => flattenTrackLessons(t).map((e) => `${t.slug}/${e.lesson.slug}`)));
+
+	for (const track of curriculum) {
+		let files: string[];
+		try {
+			files = readdirSync(`${lessonsDir}/${track.slug}`).filter((f) => f.endsWith('.md'));
+		} catch {
+			console.warn(`curriculum.ts: track "${track.slug}" has no matching lessons/${track.slug}/ directory.`);
+			continue;
+		}
+		for (const file of files) {
+			const slug = file.replace(/\.md$/, '');
+			if (!curriculumPaths.has(`${track.slug}/${slug}`)) {
+				console.warn(`lessons/${track.slug}/${file} exists but has no curriculum.ts entry — it won't appear in the sidebar/breadcrumb/nav.`);
+			}
+		}
+	}
+}
+checkCurriculumMatchesFilesystem();
 
 // Mirrors VitePress's own cleanUrls: true routing, so this always matches
 // the page's real, final address instead of a raw ".md" source path.
@@ -101,18 +126,26 @@ export default defineConfig({
 			]);
 		} else if (isLessonPage) {
 			const sectionSlug = segments[1];
+			const lessonSlug = segments[2];
 			const sectionName = SECTION_NAMES[sectionSlug];
 			const sectionUrl = `${SITE_URL}${SECTION_FIRST_LESSON[sectionSlug]}`;
+			const resolved = resolveLesson(sectionSlug, lessonSlug);
 
 			const breadcrumbItems: Record<string, unknown>[] = [
 				{ '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE_URL}/` },
 				{ '@type': 'ListItem', position: 2, name: 'Lessons', item: `${SITE_URL}/lessons/` },
 				{ '@type': 'ListItem', position: 3, name: sectionName, item: sectionUrl },
 			];
-			// Only add a 4th crumb if this page isn't already that same
+			let position = 4;
+			// Chapters have no URL of their own — reuse the section URL as the
+			// `item` for this intermediate, non-navigable crumb.
+			if (resolved?.chapter) {
+				breadcrumbItems.push({ '@type': 'ListItem', position: position++, name: resolved.chapter.title, item: sectionUrl });
+			}
+			// Only add a final crumb if this page isn't already that same
 			// section-landing page, so the trail never repeats its last stop.
 			if (url !== sectionUrl) {
-				breadcrumbItems.push({ '@type': 'ListItem', position: 4, name: title, item: url });
+				breadcrumbItems.push({ '@type': 'ListItem', position, name: title, item: url });
 			}
 
 			head.push([
@@ -163,65 +196,27 @@ export default defineConfig({
 		nav: [
 			{ text: 'Home', link: '/' },
 			{ text: 'Lessons', link: '/lessons/' },
+			{ text: 'Paths', link: '/paths/' },
 		],
 
+		// Real per-track/chapter/lesson navigation is now owned by curriculum.ts
+		// and rendered by the custom LessonSidebar.vue (injected via the
+		// `sidebar-nav-before` slot — see theme/index.ts). This stub exists
+		// solely to keep VitePress's internal `hasSidebar` computation true
+		// (which `.has-sidebar` CSS on VPNavBar/VPContent depends on) without
+		// the default theme's own VPSidebarGroup rendering a second, duplicate
+		// tree alongside LessonSidebar — an item with no `text`/`items` renders
+		// no visible markup (confirmed against VPSidebarItem.vue's `v-if="item.text"` guard).
 		sidebar: {
-			'/lessons/': [
-				{
-					text: 'IDEs',
-					collapsed: true,
-					items: [
-						{ text: '1. Introduction to IDEs', link: '/lessons/ide/introduction' },
-						{ text: '2. Popular IDEs and Their History', link: '/lessons/ide/popular-ides' },
-						{ text: '3. The Most Used IDE', link: '/lessons/ide/most-used-ide' },
-					],
-				},
-				{
-					text: 'HTML',
-					collapsed: true,
-					items: [
-						{ text: '1. Introduction to HTML', link: '/lessons/html/introduction' },
-						{ text: '2. Your First HTML File', link: '/lessons/html/your-first-html-file' },
-						{ text: '3. Attributes', link: '/lessons/html/attributes' },
-						{ text: '4. Basic Structure', link: '/lessons/html/basic-structure' },
-						{ text: '5. Meta Tags and the Head', link: '/lessons/html/meta-and-head-tags' },
-						{ text: '6. Headings and Paragraphs', link: '/lessons/html/headings-and-paragraphs' },
-						{ text: '7. Text Formatting', link: '/lessons/html/text-formatting' },
-						{ text: '8. Links', link: '/lessons/html/links' },
-						{ text: '9. Images', link: '/lessons/html/images' },
-						{ text: '10. Lists', link: '/lessons/html/lists' },
-						{ text: '11. Tables', link: '/lessons/html/tables' },
-						{ text: '12. Forms Part 1', link: '/lessons/html/forms-part-1' },
-						{ text: '13. Forms Part 2', link: '/lessons/html/forms-part-2' },
-						{ text: '14. Divs and Spans', link: '/lessons/html/divs-and-spans' },
-						{ text: '15. Semantic HTML', link: '/lessons/html/semantic-html' },
-						{ text: '16. Comments and Clean Code', link: '/lessons/html/comments-and-clean-code' },
-						{ text: '17. Putting It All Together', link: '/lessons/html/putting-it-all-together' },
-						{ text: '18. Final Quiz', link: '/lessons/html/final-quiz' },
-					],
-				},
-				{
-					text: 'CSS',
-					collapsed: true,
-					items: [
-						{ text: 'Intro to CSS', link: '/lessons/css/intro-to-css' },
-					],
-				},
-				{
-					text: 'JavaScript',
-					collapsed: true,
-					items: [
-						{ text: 'Intro to JavaScript', link: '/lessons/javascript/intro-to-javascript' },
-					],
-				},
-				{
-					text: 'Python',
-					collapsed: true,
-					items: [
-						{ text: 'Intro to Python', link: '/lessons/python/intro-to-python' },
-					],
-				},
-			],
+			'/lessons/': [{ items: [] }],
+		},
+
+		// The default theme's own prev/next pager would otherwise render next
+		// to LessonNav.vue's soft-gated "Next Lesson" control, giving learners
+		// an ungated bypass right beside the gated one.
+		docFooter: {
+			prev: false,
+			next: false,
 		},
 
 		socialLinks: [

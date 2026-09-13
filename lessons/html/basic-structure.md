@@ -66,5 +66,3 @@ Change the text inside `<title>` to your own name. Then open your browser's actu
 - The DOCTYPE tells the browser this is a modern HTML page.
 - The head holds information about the page, like its title, which is not shown on the page itself.
 - The body holds everything a visitor actually sees.
-
-**Next lesson:** [Meta Tags and the Head](/lessons/html/meta-and-head-tags)

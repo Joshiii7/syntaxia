@@ -54,5 +54,3 @@ Add an `<h2>` and a `<p>` of your own below the existing ones. Try using an `<h3
 - Headings range from h1, the biggest, down to h6, the smallest.
 - A page usually has one h1 for its main title, with smaller headings for sections underneath.
 - The p tag groups a block of text into a paragraph.
-
-**Next lesson:** [Text Formatting](/lessons/html/text-formatting)

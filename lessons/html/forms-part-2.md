@@ -80,5 +80,3 @@ Add a third dropdown option, and a second checkbox for another topping.
 - The select and option tags create a dropdown, letting someone pick one choice.
 - A checkbox lets someone turn something on or off, and multiple checkboxes can be picked at once.
 - Radio buttons in the same group share a name attribute, and only one in that group can be picked at a time.
-
-**Next lesson:** [Divs and Spans](/lessons/html/divs-and-spans)
