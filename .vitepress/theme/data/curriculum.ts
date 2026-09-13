@@ -139,6 +139,13 @@ export function findTrack(trackSlug: string): CurriculumTrack | undefined {
 	return curriculum.find((t) => t.slug === trackSlug);
 }
 
+/** Path of a track's first lesson — where a "go to this track" link (the
+ * topic switcher, config.mts's breadcrumb JSON-LD) should point, since
+ * tracks have no dedicated overview/index page of their own. */
+export function firstLessonPath(track: CurriculumTrack): string {
+	return lessonPath(track.slug, flattenTrackLessons(track)[0].lesson.slug);
+}
+
 /** Flattens a track's lessons (chaptered or flat) into one ordered list. */
 export function flattenTrackLessons(
 	track: CurriculumTrack,
