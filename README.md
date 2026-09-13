@@ -28,8 +28,15 @@ syntaxia/
 ├── lessons/
 │   ├── ide/                     # standalone section, no editor on any page:
 │   │   ├── introduction.md               # what an IDE is
-│   │   ├── popular-ides.md               # 6 real IDEs: creator, why, versions, environment
-│   │   └── most-used-ide.md              # VS Code, and why it's the most used
+│   │   ├── why-use-an-ide.md             # the case for one over a plain text editor
+│   │   ├── popular-ides-overview.md      # 7 real IDEs/editors: creator, why, versions, most used
+│   │   ├── choosing-the-right-ide.md     # picking one based on what you're building
+│   │   ├── setting-up-your-ide.md        # installing VS Code, opening a folder
+│   │   ├── ide-navigation-and-features.md # file explorer, tabs, command palette, search, split view
+│   │   ├── using-the-terminal.md         # opening + basic commands in the integrated terminal
+│   │   ├── debugging-basics.md           # breakpoints, stepping, reading error messages
+│   │   ├── extensions-and-customization.md # what extensions are, a few useful ones, themes/settings
+│   │   └── shortcuts-cheat-sheet.md      # reference page, no quiz — all shortcuts in one place
 │   ├── html/                   # 18-page curriculum, in sidebar/prev-next order:
 │   │   ├── introduction.md               # theory only, no editor
 │   │   ├── your-first-html-file.md       # tags + writing/opening a real .html file

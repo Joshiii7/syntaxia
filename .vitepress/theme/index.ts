@@ -10,6 +10,7 @@ import ScrollToTopButton from './components/ScrollToTopButton.vue';
 import SiteFooter from './components/SiteFooter.vue';
 import LessonSidebar from './components/LessonSidebar.vue';
 import Breadcrumb from './components/Breadcrumb.vue';
+import TopicNav from './components/TopicNav.vue';
 import LessonNav from './components/LessonNav.vue';
 import LessonsIndex from './components/LessonsIndex.vue';
 import PathsIndex from './components/PathsIndex.vue';
@@ -33,16 +34,33 @@ export default {
 		// puts a live Vue component beside the h1, since hero.image only
 		// accepts a static image/video source, not a component.
 		//
+		// home-hero-before is VPHome's own slot, rendered as the very first
+		// thing inside .VPHome, before the hero — full width, since the home
+		// layout has no sidebar to share space with (unlike doc-before below).
+		//
+		// doc-before renders TopicNav on every non-home page (so it's truly
+		// site-wide, not lesson-only), with Breadcrumb added right after it
+		// only on an actual lesson page, where a track/chapter/lesson trail
+		// makes sense — /lessons/ and /paths/ get the topic switcher without
+		// a breadcrumb, since they aren't "in" any one track/lesson. TopicNav
+		// gets `fixed: true` only on a lesson page, since that's the one case
+		// where it renders inside the sidebar-narrowed content column and
+		// needs `position: fixed` to still span the full viewport — see
+		// TopicNav.vue's own comment and the matching style.css rules for
+		// why that also means adjusting how much top space the sidebar/doc
+		// content reserve there.
+		//
 		// sidebar-nav-before/doc-before/doc-after are the default theme's
 		// supported extension points around, respectively, its own
 		// (neutralized, see config.mts) sidebar tree and the rendered doc body
-		// — this is how LessonSidebar/Breadcrumb/LessonNav slot in without
-		// replacing DefaultTheme.Layout wholesale.
+		// — this is how LessonSidebar/TopicNav/Breadcrumb/LessonNav slot in
+		// without replacing DefaultTheme.Layout wholesale.
 		return h(DefaultTheme.Layout, null, {
 			'layout-bottom': () => [h(SiteFooter), h(ScrollToTopButton)],
 			'home-hero-image': () => h(RotatingCube),
+			'home-hero-before': () => h(TopicNav),
 			'sidebar-nav-before': () => (isLessonRoute.value ? h(LessonSidebar) : null),
-			'doc-before': () => (isLessonRoute.value ? h(Breadcrumb) : null),
+			'doc-before': () => (isLessonRoute.value ? [h(TopicNav, { fixed: true }), h(Breadcrumb)] : h(TopicNav)),
 			'doc-after': () => (isLessonRoute.value ? h(LessonNav) : null),
 		});
 	},

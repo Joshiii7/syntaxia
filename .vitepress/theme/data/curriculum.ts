@@ -43,8 +43,15 @@ export const curriculum: CurriculumTrack[] = [
 		title: 'IDEs',
 		lessons: [
 			{ slug: 'introduction', title: 'Introduction to IDEs' },
-			{ slug: 'popular-ides', title: 'Popular IDEs and Their History' },
-			{ slug: 'most-used-ide', title: 'The Most Used IDE' },
+			{ slug: 'why-use-an-ide', title: 'Why Use an IDE?' },
+			{ slug: 'popular-ides-overview', title: 'Popular IDEs & Code Editors Overview' },
+			{ slug: 'choosing-the-right-ide', title: 'Choosing the Right IDE for Your Path' },
+			{ slug: 'setting-up-your-ide', title: 'Setting Up Your IDE' },
+			{ slug: 'ide-navigation-and-features', title: 'Basic IDE Navigation & Features' },
+			{ slug: 'using-the-terminal', title: 'Using the Integrated Terminal' },
+			{ slug: 'debugging-basics', title: 'Debugging Basics in an IDE' },
+			{ slug: 'extensions-and-customization', title: 'Extensions & Customization' },
+			{ slug: 'shortcuts-cheat-sheet', title: 'IDE Shortcuts Cheat Sheet' },
 		],
 	},
 	{
@@ -137,6 +144,13 @@ export function lessonPath(trackSlug: string, lessonSlug: string): string {
 
 export function findTrack(trackSlug: string): CurriculumTrack | undefined {
 	return curriculum.find((t) => t.slug === trackSlug);
+}
+
+/** Path of a track's first lesson — where a "go to this track" link (the
+ * topic switcher, config.mts's breadcrumb JSON-LD) should point, since
+ * tracks have no dedicated overview/index page of their own. */
+export function firstLessonPath(track: CurriculumTrack): string {
+	return lessonPath(track.slug, flattenTrackLessons(track)[0].lesson.slug);
 }
 
 /** Flattens a track's lessons (chaptered or flat) into one ordered list. */
